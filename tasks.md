@@ -5,7 +5,7 @@
 ### High Priority
 
 - [ ] Initialize Django backend project structure
-- [ ] Set up Django database models (Employee, TimeclockEntry, Request, Event, Shift)
+- [ ] Set up Django database models (Employee, TimeclockEntry, Request)
 - [ ] Create Django REST API endpoints
 - [ ] Implement Django authentication system
 - [ ] Connect React frontend to Django backend
@@ -34,13 +34,14 @@
 - [x] Establish Memory Bank system
 - [x] Complete Product Requirements Document (PRD)
 - [x] Organize project documentation structure
+- [x] MVP scope refactored to remove rota/scheduling features
 
-## Phase 1 Tasks (Core Timekeeping & Requests)
+## MVP Implementation Tasks
 
 - [ ] **Backend Setup**
   - [ ] Django project initialization
   - [ ] Database configuration
-  - [ ] Model creation and migrations
+  - [ ] Model creation and migrations (Employee, TimeclockEntry, Request, BalanceAdjustment, SystemSettings, Notification, AuditLog)
   - [ ] Admin interface setup
 - [ ] **API Development**
   - [ ] Employee management endpoints
@@ -58,24 +59,23 @@
   - [ ] Frontend-backend integration testing
   - [ ] User acceptance testing
 
-## Phase 2 Tasks (Event & Scheduling Management)
+## Future Enhancements (Post-MVP)
 
-- [ ] **Event Management**
+- [ ] **Event & Scheduling Management**
   - [ ] Event creation and management
   - [ ] Shift assignment system
-  - [ ] Calendar views
-- [ ] **Scheduling System**
   - [ ] Rota creation interface
   - [ ] Drag-and-drop functionality
+  - [ ] Calendar views
   - [ ] Schedule notifications
-- [ ] **Advanced Features**
   - [ ] Event reports
   - [ ] Schedule optimization
   - [ ] Unfilled shift warnings
 
 ## Notes
 
-- All tasks are prioritized based on Phase 1 MVP requirements
+- MVP focuses on core timekeeping and time-off management
+- Event/rota features moved to future enhancements
 - Backend implementation is the critical path for project progress
 - Frontend structure is already in place and ready for backend integration
 - Memory Bank system is active for AI-assisted development

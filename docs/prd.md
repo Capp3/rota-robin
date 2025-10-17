@@ -2,9 +2,9 @@
 
 ## Executive Summary
 
-An operational web application for a broadcast facility providing employee time tracking, scheduling (rota), and event management. The system supports 20-30 employees with 3-5 concurrent users, tracking time against events while managing holiday, leave, and TOIL (Time Off In Lieu) balances.
+An operational web application for a broadcast facility providing employee time tracking and time-off request management. The system supports 20-30 employees with 3-5 concurrent users, managing holiday, leave, and TOIL (Time Off In Lieu) balances.
 
-**Primary Goal**: Enable scheduling and timekeeping for a single business unit with separate interfaces for employees and managers.
+**Primary Goal**: Enable timekeeping and time-off management for a single business unit with separate interfaces for employees and managers.
 
 ## Architecture
 
@@ -176,18 +176,14 @@ import { mockEmployees } from "../lib/mockData.ts";
    - Generated via shadcn CLI
    - Can be customized but keep in ui/ directory
 
-## MVP Implementation Phases
+## MVP Scope: Core Timekeeping & Requests
 
-The MVP will be delivered in two phases to manage scope and ensure core functionality is working before adding complexity.
-
-### Phase 1: Timekeeping & Requests (Core Functionality)
-
-**Goal**: Establish basic time tracking and approval workflow
+**Goal**: Establish complete time tracking and approval workflow with time-off management
 
 **Features**:
 
 - User authentication and role management (Employee/Manager)
-- Employee Dashboard (basic view with balances)
+- Employee Dashboard with time balances
 - Timeclock entry submission and editing
 - Timeclock approval workflow
 - Request submission (Holiday/Leave/TOIL)
@@ -202,83 +198,33 @@ The MVP will be delivered in two phases to manage scope and ensure core function
 **Pages Included**:
 
 - Login
-- Employee Dashboard (simplified - no rota calendar)
+- Employee Dashboard
 - Timeclock Entry
-- Timeclock Detail
 - Timekeeping History
 - Requests
-- Management Dashboard (simplified - no event calendar)
+- Management Dashboard
 - Employee Management
 - Employee Detail
 - Timeclock Approvals
 - Settings
 
-**Success Criteria for Phase 1**:
+**Success Criteria**:
 
 - Employees can submit and edit timeclock entries
 - Managers can approve/reject entries and requests
 - OT calculations work correctly based on settings
 - Time balances update correctly when requests are approved/cancelled
 - All data properly audited
+- 100% of timeclock entries submitted through system (no paper/spreadsheets)
+- All employees and managers actively using the system
 
 **Estimated Complexity**: Medium - Standard CRUD with approval workflows
-
-### Phase 2: Event & Scheduling Management
-
-**Goal**: Add event management and rota creation for complete scheduling capability
-
-**Features**:
-
-- Event creation and management
-- Shift creation and assignment
-- Rota creation (weekly scheduling view)
-- Drag-and-drop shift assignment
-- Event calendar views on dashboards
-- Timeclock entries linked to events
-- Unfilled shift warnings
-- Event reports
-
-**Pages Added/Enhanced**:
-
-- Employee Dashboard (add rota calendar)
-- Management Dashboard (add event calendar)
-- Event Management
-- Event Creation
-- Rota Creation
-
-**Dependencies**:
-
-- Requires Phase 1 to be stable
-- Event and Shift data models
-- Enhanced notification system for unfilled shifts
-
-**Success Criteria for Phase 2**:
-
-- Events can be created with multiple shifts
-- Rota can be created visually for 6 weeks ahead
-- Shifts can be assigned to employees via drag-and-drop
-- Employees can see their schedule on dashboard
-- Timeclock entries can be linked to events
-
-**Estimated Complexity**: Medium-High - Drag-and-drop UI, complex calendar views
-
-### Phase Transition
-
-- Phase 1 should be fully tested and deployed to production (or staging) before Phase 2 begins
-- User feedback from Phase 1 will inform Phase 2 implementation
-- Database migrations between phases must be planned carefully
-
-**TODO**:
-
-- Define specific timeline for each phase
-- Confirm if Phase 1 will be deployed before Phase 2 development starts
-- Define acceptance criteria for Phase 1 completion
 
 ## User Roles & Permissions
 
 ### Employee (User)
 
-- View personal dashboard, rota, and time balances
+- View personal dashboard and time balances
 - Submit timeclock entries
 - Create and cancel requests (holiday, leave, TOIL)
 - Edit own timeclock entries (until approved)
@@ -290,8 +236,6 @@ The MVP will be delivered in two phases to manage scope and ensure core function
 - Access management dashboard
 - Approve/reject timeclock entries
 - Approve/reject requests (holiday, leave, TOIL)
-- Create and manage events
-- Create rotas and assign shifts
 - View and manage all employee data
 - Edit any timeclock entry (including approved)
 - Ad hoc adjustment of employee time balances
@@ -357,42 +301,11 @@ The MVP will be delivered in two phases to manage scope and ensure core function
 - Confirm if there's a cutoff for editing/approving previous months
 - Define notification method for the end-of-month reminder
 
-### Scheduling & Rotas
+### General Settings
 
 - Timezone: Selectable in settings
 - Pay Period: Selectable (currently monthly)
-- **Shifts cannot span midnight** - Hard block in UI, shifts must be completed within a single day
-- Rotas can be created up to 6 weeks in advance
-- Shift swapping managed manually by manager (not automated in app)
-- Events can have multiple shifts assigned
-- Shifts can be marked as OPTIONAL
-- Approved holiday requests should be reflected in rota creation
-
-**Rota Notifications** (Phase 2):
-
-- Employees receive in-app notification when rota is created or updated
-- Notification includes affected date range and link to view schedule
-
-**TODO**:
-
-- Define if employees can view the full rota or only their own shifts
-- Clarify "optional" shift implications (affects scheduling requirements? Pay?)
-
-### Events & Shifts
-
-- **Event**: A scheduled activity at a specific place and time
-- **Shift**: A staffing assignment within an event
-  - Multiple shifts can be assigned to one event
-  - Each shift can have freeform notes describing the role/task
-  - Shifts can be marked as OPTIONAL
-- Pay rates are consistent regardless of shift type or event
-- Shifts can be filled or unfilled
-
-**TODO**:
-
-- Define if events can exist without shifts
-- Define if there are predefined shift templates or all freeform
-- Clarify notification when shifts remain unfilled
+- **Timeclock entries cannot span midnight** - Hard block in UI, entries must be completed within a single day
 
 ## Application Structure
 
@@ -404,7 +317,6 @@ graph TB
         Login1[Django Login]
         Dash1[Employee Dashboard]
         TC1[Timeclock Entry]
-        TCD1[Timeclock Detail]
         TK1[Timekeeping History]
         Req1[Requests]
 
@@ -412,7 +324,6 @@ graph TB
         Dash1 --> TC1
         Dash1 --> TK1
         Dash1 --> Req1
-        TK1 --> TCD1
     end
 
     subgraph Manager_Flow[Manager Flow - Additional Access]
@@ -420,20 +331,14 @@ graph TB
         Dash2[Management Dashboard]
         EmpMgmt[Employee Management]
         EmpDetail[Employee Detail]
-        EventMgmt[Event Management]
-        EventCreate[Event Creation]
         TCApproval[Timeclock Approvals]
-        Rota[Rota Creation]
         Settings[Settings]
 
         Login2 --> Dash2
         Dash2 --> EmpMgmt
-        Dash2 --> EventMgmt
         Dash2 --> TCApproval
-        Dash2 --> Rota
         Dash2 --> Settings
         EmpMgmt --> EmpDetail
-        EventMgmt --> EventCreate
     end
 
     style Employee_Flow fill:#e1f5ff
@@ -467,28 +372,26 @@ graph TB
 
 **Components**:
 
-- **Calendar Widget**: Displays personal rota (scheduled shifts)
-  - Week or month view
-  - Highlight current day
-  - Show assigned shifts with time and event name
-- **Time Balances Snapshot**:
+- **Time Balances Display**:
   - Holiday balance (hours/days)
   - TOIL balance (hours/days) - if activated
   - OT balance (hours)
   - Leave used (current period)
 - **Quick Actions**:
-  - "Clock In/Out" button → Timeclock page
+  - "Submit Time Entry" button → Timeclock Entry page
   - "New Request" button → Requests page
+- **Recent Activity**:
+  - Recent timeclock entries
+  - Recent requests and their status
 
 **TODO**:
 
-- Define if calendar shows approved holiday/leave requests
 - Define time balance display format (hours vs days)
 - Confirm if "Leave used" should be tracked separately or just for display
 
 #### Timeclock Entry Page
 
-**Purpose**: Submit time worked against events
+**Purpose**: Submit time worked
 
 **Fields**:
 
@@ -496,10 +399,7 @@ graph TB
 - Start time (24h format)
 - End time (24h format)
 - Break time (duration in minutes/hours)
-- Event selector (dropdown of available events)
-  - Option for "Ongoing Event" (events without defined end date)
-  - Option for "No Event" or "General Work"
-- Notes (optional, freeform text)
+- Notes (optional, freeform text describing work performed)
 
 **Calculations**:
 
@@ -546,13 +446,12 @@ graph TB
 
 - Table of recent entries (last 30 days or current pay period)
   - Date
-  - Event
   - Hours worked
   - OT hours
   - Approval status
-- Filters: Date range, approval status, event
+  - Notes
+- Filters: Date range, approval status
 - Pagination (20-50 entries per page)
-- Click row to view Timeclock Detail
 
 **TODO**: Define default time range and filter options.
 
@@ -602,30 +501,21 @@ graph TB
 
 **Components**:
 
-- **Single Day Calendar**: Shows today's scheduled events
-  - Event name
-  - Time
-  - Shifts filled/total
-  - Click event for details
-- **Upcoming Events Table**: Next 7-14 days
-  - Event name
-  - Date/time
-  - Staffing status
+- **Employee Summary**:
+  - Total active employees
+  - Employees with pending time entries
+  - Employees on holiday/leave today
 - **Pending Approvals Summary**:
-  - Count of pending timeclock entries
+  - Count of pending timeclock entries (with age indicator)
   - Count of pending requests
   - Quick link to approval pages
 - **Quick Links**:
   - Employee Management
-  - Event Management
-  - Rota Creation
   - Timeclock Approvals
   - Settings
-
-**TODO**:
-
-- Define exact date range for "upcoming events"
-- Confirm if calendar should be interactive (drag/drop?) or read-only
+- **Recent Activity**:
+  - Recently approved entries
+  - Recently processed requests
 
 #### Employee Management Page
 
@@ -808,48 +698,6 @@ graph TB
 - Define if partial approval is allowed (e.g., approve 3 days of 5 requested)
 - Confirm notification method when entries/requests are processed
 
-#### Rota Creation Page
-
-**Purpose**: Create weekly staff schedule
-
-**Display**:
-
-- One-week calendar view (selectable week, up to 6 weeks in advance)
-- Each day shows:
-  - Available shifts from events (unfilled shifts highlighted)
-  - Ad hoc shifts (created without events)
-  - Assigned employees
-- Employee panel on side showing:
-  - All employees
-  - Approved holiday/leave (indicating unavailability)
-  - Current week hours (to monitor OT)
-
-**Interaction**:
-
-- Drag and drop employees to shifts
-- Click to add ad hoc shift (popup form)
-- Shift color coding:
-  - Unfilled: Red/Orange
-  - Filled: Green
-  - Optional: Blue
-  - Ad hoc: Gray
-
-**Ad Hoc Shift Form**:
-
-- Date
-- Start time
-- End time
-- Employee assignment (optional)
-- Notes
-- Optional checkbox
-
-**TODO**:
-
-- Define if employees can be double-booked (overlap detection?)
-- Define if system should warn about approaching OT threshold
-- Confirm if approved holidays should block assignment or just warn
-- Define if rota changes trigger notifications to employees
-
 #### Settings Page
 
 **Purpose**: Configure system-wide settings
@@ -874,10 +722,8 @@ graph TB
 
 **Notification Settings**:
 
-- Enable email notifications: Checkbox
 - Timeclock approval deadline: Number input (days)
 - End of month reminder: Checkbox
-- Unfilled shift warning: Number input (days before event)
 
 **TODO**:
 
@@ -894,9 +740,9 @@ graph TB
 
 1. **Employee Dashboard** - Most frequently used page, needs intuitive layout
 2. **Timeclock Entry** - Critical user flow, must be simple and quick
-3. **Rota Creation** - Complex interaction (drag-and-drop), requires detailed wireframe
-4. **Management Dashboard** - Hub for manager workflows
-5. **Timeclock Approvals** - Bulk approval interface needs careful UX design
+3. **Management Dashboard** - Hub for manager workflows
+4. **Timeclock Approvals** - Bulk approval interface needs careful UX design
+5. **Requests** - Time-off request interface
 
 **Design Considerations**:
 
@@ -910,7 +756,7 @@ graph TB
 
 **Actions Required**:
 
-- Research and collect examples of similar time tracking/scheduling interfaces
+- Research and collect examples of similar time tracking interfaces
 - Define color scheme and branding guidelines
 - Create low-fidelity wireframes for core pages
 - User testing with 2-3 target users before final design
@@ -983,7 +829,6 @@ TimeclockEntry:
     - start_time: time
     - end_time: time
     - break_minutes: integer (default: 0)
-    - event: foreign key → Event (nullable)
     - notes: text (nullable)
     - total_hours: decimal (calculated)
     - ot_hours: decimal (calculated)
@@ -1052,70 +897,6 @@ Request:
 - Define if requests can be modified after submission (or must cancel and resubmit)
 - Define common duration presets in UI (half-day = X hours, full day = X hours)
 
-### Event Model
-
-```python
-Event:
-    - id: integer (primary key)
-    - event_name: string (max 64 chars)
-    - start_date: date
-    - start_time: time
-    - end_date: date
-    - end_time: time
-    - address_line1: string
-    - address_line2: string (nullable)
-    - location_phone: string (nullable)
-    - room: string (nullable)
-    - poc_name: string (nullable)
-    - poc_phone: string (nullable)
-    - company_name: string (nullable)
-    - company_address_line1: string (nullable)
-    - company_address_line2: string (nullable)
-    - setup_date: date (nullable)
-    - setup_time: time (nullable)
-    - teardown_date: date (nullable)
-    - teardown_time: time (nullable)
-    - description: text (nullable)
-    - status: enum ['UPCOMING', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED']
-    - created_by: foreign key → Employee
-    - created_at: datetime
-    - updated_at: datetime
-```
-
-**TODO**:
-
-- Define if events can be recurring (templates)
-- Confirm address field lengths
-- Define when status transitions occur (manual or automatic)
-
-### Shift Model
-
-```python
-Shift:
-    - id: integer (primary key)
-    - event: foreign key → Event (nullable, for ad-hoc shifts)
-    - shift_date: date
-    - start_time: time
-    - end_time: time
-    - assigned_employee: foreign key → Employee (nullable)
-    - is_optional: boolean (default: false)
-    - notes: text (nullable)
-    - created_by: foreign key → Employee
-    - created_at: datetime
-    - updated_at: datetime
-```
-
-**Business Logic**:
-
-- If event is null, shift is "ad-hoc" (not tied to specific event)
-- Unfilled shifts have assigned_employee = null
-
-**TODO**:
-
-- Define if we need shift status (UNFILLED, FILLED, COMPLETED)
-- Confirm if shifts can be assigned to multiple employees (currently assuming 1:1)
-- Define if historical shift assignments should be tracked separately
-
 ### Balance Adjustment Model
 
 ```python
@@ -1158,7 +939,6 @@ SystemSettings:
     - date_format: string (default: 'YYYY-MM-DD')
     - timeclock_approval_deadline_days: integer (default: 7)
     - enable_end_of_month_reminder: boolean (default: true)
-    - unfilled_shift_warning_days: integer (default: 3)
     - updated_by: foreign key → Employee
     - updated_at: datetime
 ```
@@ -1174,10 +954,10 @@ SystemSettings:
 Notification:
     - id: integer (primary key)
     - recipient: foreign key → Employee
-    - notification_type: enum ['TIMECLOCK_OVERDUE', 'PENDING_REQUEST', 'END_OF_MONTH', 'UNFILLED_SHIFT', 'REQUEST_PROCESSED', 'TIMECLOCK_APPROVED']
+    - notification_type: enum ['TIMECLOCK_OVERDUE', 'PENDING_REQUEST', 'END_OF_MONTH', 'REQUEST_PROCESSED', 'TIMECLOCK_APPROVED']
     - title: string
     - message: text
-    - related_object_type: string (nullable, e.g., 'TimeclockEntry', 'Request', 'Shift')
+    - related_object_type: string (nullable, e.g., 'TimeclockEntry', 'Request')
     - related_object_id: integer (nullable)
     - is_read: boolean (default: false)
     - read_at: datetime (nullable)
@@ -1227,14 +1007,8 @@ Employee (1) ──── (many) TimeclockEntry
 Employee (1) ──── (many) Request
 Employee (1) ──── (many) BalanceAdjustment [as target]
 Employee (1) ──── (many) BalanceAdjustment [as adjuster]
-Employee (1) ──── (many) Event [as creator]
-Employee (1) ──── (many) Shift [as assigned]
-Employee (1) ──── (many) Shift [as creator]
 Employee (1) ──── (many) Notification
 Employee (1) ──── (many) AuditLog
-
-Event (1) ──── (many) Shift
-Event (1) ──── (many) TimeclockEntry
 
 TimeclockEntry (many) ──── (1) Employee [as approver]
 Request (many) ──── (1) Employee [as approver]
@@ -1255,7 +1029,6 @@ SystemSettings (singleton)
 - Pending timeclock entries older than 7 days
 - Pending requests awaiting approval
 - End of month unapproved timeclock entries
-- Unfilled shifts approaching (X days before event)
 
 **TODO**:
 
@@ -1272,16 +1045,10 @@ SystemSettings (singleton)
 
    - All employees or single employee
    - Date range
-   - Shows: Date, Event, Hours, OT, Total
+   - Shows: Date, Hours, OT, Notes, Total
    - Formats: PDF, Excel, CSV
 
-2. **Event Detail Report**
-
-   - Single event or date range
-   - Shows: Event info, assigned shifts, actual hours worked
-   - Formats: PDF, Excel
-
-3. **Holiday/Leave Report**
+2. **Holiday/Leave Report**
    - All employees or single employee
    - Shows: Balance, taken, remaining, upcoming approved requests
    - Formats: PDF, Excel, CSV
@@ -1370,7 +1137,6 @@ Query parameters for GET /timeclock:
 - `start_date`: Filter by date range start
 - `end_date`: Filter by date range end
 - `status`: Filter by status (pending, approved, rejected)
-- `event_id`: Filter by event
 
 #### Requests (Holiday/Leave/TOIL)
 
@@ -1391,63 +1157,10 @@ Query parameters for GET /requests:
 - `status`: Filter by status
 - `start_date`: Filter by date range
 
-#### Events
-
-```
-GET    /api/v1/events              # List all events
-POST   /api/v1/events              # Create new event (Manager only)
-GET    /api/v1/events/{id}         # Get event details
-PUT    /api/v1/events/{id}         # Update event (Manager only)
-DELETE /api/v1/events/{id}         # Delete event (Manager only)
-GET    /api/v1/events/upcoming     # Get upcoming events
-```
-
-Query parameters for GET /events:
-
-- `start_date`: Filter by date range
-- `end_date`: Filter by date range
-- `status`: Filter by status
-
-#### Shifts
-
-```
-GET    /api/v1/shifts              # List shifts (with filters)
-POST   /api/v1/shifts              # Create shift (Manager only)
-GET    /api/v1/shifts/{id}         # Get shift details
-PUT    /api/v1/shifts/{id}         # Update shift (Manager only)
-DELETE /api/v1/shifts/{id}         # Delete shift (Manager only)
-GET    /api/v1/shifts/unfilled     # Get unfilled shifts (Manager only)
-POST   /api/v1/shifts/{id}/assign  # Assign employee to shift (Manager only)
-DELETE /api/v1/shifts/{id}/unassign # Unassign employee from shift (Manager only)
-```
-
-Query parameters for GET /shifts:
-
-- `event_id`: Filter by event
-- `employee_id`: Filter by assigned employee
-- `start_date`: Filter by date range
-- `end_date`: Filter by date range
-- `unfilled`: Boolean to show only unfilled shifts
-
-#### Schedule/Rota
-
-```
-GET    /api/v1/schedule            # Get schedule for date range
-GET    /api/v1/schedule/me         # Get personal schedule
-GET    /api/v1/schedule/week       # Get weekly schedule (with week parameter)
-```
-
-Query parameters:
-
-- `start_date`: Start of date range
-- `end_date`: End of date range
-- `employee_id`: Filter by specific employee (Manager only)
-
 #### Reports
 
 ```
 GET    /api/v1/reports/timecard    # Generate timecard report
-GET    /api/v1/reports/event       # Generate event report
 GET    /api/v1/reports/balances    # Generate balance report
 POST   /api/v1/reports/export      # Export data as CSV
 ```
@@ -1556,7 +1269,7 @@ PUT    /api/v1/settings            # Update system settings (Manager only)
 **TODO**:
 
 - Define specific GDPR compliance requirements and implementation
-- Define data retention policy (how long to keep timeclock entries, events, etc.)
+- Define data retention policy (how long to keep timeclock entries, etc.)
 - Define data deletion/anonymization process for terminated employees
 - Define audit log requirements for compliance
 - Plan for privacy policy and terms of service
@@ -1601,9 +1314,8 @@ PUT    /api/v1/settings            # Update system settings (Manager only)
 
 **Primary Success Criteria**:
 
-- System successfully manages scheduling and timekeeping for single business unit
+- System successfully manages timekeeping and time-off for single business unit
 - 100% of timeclock entries submitted through system (no paper/spreadsheets)
-- 100% of rota created in system
 - All employees and managers actively using the system
 
 **Performance Metrics**:
@@ -1614,9 +1326,9 @@ PUT    /api/v1/settings            # Update system settings (Manager only)
 
 **User Satisfaction Metrics** (informal for MVP):
 
-- Managers find rota creation faster than previous method
 - Employees can submit timeclock entries in < 2 minutes
 - Reduction in timeclock approval delays
+- Improved visibility into time balances
 
 **TODO**:
 
@@ -1630,8 +1342,6 @@ PUT    /api/v1/settings            # Update system settings (Manager only)
 
 - Email or SMS notifications (in-app only)
 - Mobile app or mobile-optimized views
-- Shift swapping by employees (manager-handled only)
-- Automated shift assignment/optimization
 - Integration with external payroll systems (manual CSV export only)
 - Multi-facility/multi-business unit support
 - Custom user roles beyond Employee/Manager
@@ -1641,15 +1351,25 @@ PUT    /api/v1/settings            # Update system settings (Manager only)
 - Training/certification tracking
 - Performance reviews
 
-**Potential Future Enhancements** (post-MVP):
+**Future Enhancements** (post-MVP):
 
-- OpenAPI implementation
-- Mobile application
-- Email/SMS notifications
-- Advanced reporting and analytics
-- Automated schedule optimization
-- Employee shift swap requests
-- Direct payroll system integration
+- **Event & Scheduling Management**:
+  - Event creation and management
+  - Shift creation and assignment
+  - Rota creation (weekly scheduling view)
+  - Drag-and-drop shift assignment
+  - Event calendar views on dashboards
+  - Timeclock entries linked to events
+  - Unfilled shift warnings
+  - Event reports
+- **Advanced Features**:
+  - OpenAPI implementation
+  - Mobile application
+  - Email/SMS notifications
+  - Advanced reporting and analytics
+  - Employee shift swap requests
+  - Direct payroll system integration
+  - Automated schedule optimization
 
 ## Assumptions & Constraints
 
