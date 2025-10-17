@@ -1,0 +1,49 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		}
+	],
+	"settings": {
+		"todo-tree.general.tags": [
+			"TODO",
+			"FIXME",
+			"NOTE",
+			"BUG",
+			"TASK",
+			"REVIEW",
+			"XXX"
+		],
+		"todo-tree.regex.regex": "(//|#|<!--|;|/\\*|^|^\\s*(-|\\*|\\+))\\s*($TAGS)",
+		"todo-tree.highlights.customHighlight": {
+			"TODO": {
+				"icon": "check",
+				"type": "tag",
+				"foreground": "white",
+				"background": "red",
+				"iconColour": "blue"
+			},
+			"FIXME": {
+				"icon": "alert",
+				"type": "tag",
+				"foreground": "white",
+				"background": "orange",
+				"iconColour": "orange"
+			},
+			"XXX": {
+				"icon": "tools",
+				"type": "tag",
+				"foreground": "white",
+				"background": "purple",
+				"iconColour": "purple"
+			},
+			"NOTE": {
+				"icon": "note",
+				"type": "tag",
+				"foreground": "white",
+				"background": "blue",
+				"iconColour": "blue"
+			}
+		}
+	}
+}
