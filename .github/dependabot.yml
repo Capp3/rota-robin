@@ -1,0 +1,40 @@
+version: 2
+updates:
+  # Python dependencies (managed by uv)
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "daily"
+      time: "09:00"
+    open-pull-requests-limit: 0
+    commit-message:
+      prefix: "deps"
+      include: "scope"
+    assignees:
+      - "Capp3"
+
+  # Node.js dependencies (npm)
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "daily"
+      time: "09:00"
+    open-pull-requests-limit: 0
+    commit-message:
+      prefix: "deps"
+      include: "scope"
+    assignees:
+      - "Capp3"
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"
+      time: "09:00"
+    open-pull-requests-limit: 0
+    commit-message:
+      prefix: "ci"
+      include: "scope"
+    assignees:
+      - "Capp3"

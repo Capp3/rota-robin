@@ -3,6 +3,13 @@
 # Post-create script for Rota Round dev container
 echo "🚀 Setting up Rota Round development environment..."
 
+# Debug: Check if workspace is mounted and list contents
+echo "🔍 Debugging workspace mount..."
+echo "Current directory: $(pwd)"
+echo "Workspace contents:"
+ls -la /workspace || echo "❌ Cannot access /workspace directory"
+echo ""
+
 # Ensure we're in the workspace directory
 cd /workspace
 

@@ -41,9 +41,11 @@
         "redhat.vscode-yaml",
         "bradlc.vscode-tailwindcss",
         "esbenp.prettier-vscode",
-        "ms-vscode.vscode-json"
+        "ms-vscode.vscode-json",
+        "bierner.markdown-mermaid"
       ],
       "settings": {
+        "remote.autoForwardPorts": false,
         // Python settings
         "python.defaultInterpreterPath": "/workspace/.venv/bin/python",
         "python.testing.pytestEnabled": true,
@@ -70,9 +72,7 @@
         "python.analysis.autoImportCompletions": true,
 
         // Django settings
-        "python.analysis.extraPaths": [
-          "/workspace/backend"
-        ],
+        "python.analysis.extraPaths": ["/workspace/backend"],
 
         // Editor settings
         "editor.formatOnSave": true,
@@ -86,10 +86,7 @@
   },
 
   // Forward only GUI services - backend services remain isolated
-  "forwardPorts": [
-    "8888:8888",  // PgAdmin (database management UI) - mapped to host 8888
-    "3000:3000"   // Frontend Vite dev server (React app) - mapped to host 5173
-  ],
+  "appPort": ["3333:3000", "8888:8888"],
 
   // Use 'postCreateCommand' to run commands after the container is created
   "postCreateCommand": "bash .devcontainer/post-create.sh",
@@ -103,8 +100,9 @@
   // Mount the workspace
   "workspaceFolder": "/workspace",
 
-  // Mount SSH directory for git operations
+  // Mount SSH directory for git operations and ensure workspace is mounted
   "mounts": [
+    "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
     "source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached,readonly"
   ],
 
@@ -116,9 +114,7 @@
   },
 
   // Run arguments
-  "runArgs": [
-    "--init"
-  ],
+  "runArgs": ["--init"],
 
   // Lifecycle scripts
   "initializeCommand": "echo 'Initializing Rota Round dev container...'",

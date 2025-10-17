@@ -7,7 +7,7 @@ volumes:
   pgadmin-data:
 
 services:
-## PostgreSQL Database
+  ## PostgreSQL Database
   postgres:
     image: postgres:18
     container_name: postgres
@@ -16,20 +16,25 @@ services:
     networks:
       - backend-network
     ports:
-      - "5432:5432"  # Host:5432 -> Container:5432 (standard PostgreSQL port inside)
+      - "5432:5432" # Host:5432 -> Container:5432 (standard PostgreSQL port inside)
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-PLACEHOLDER_DB}
       POSTGRES_USER: ${POSTGRES_USER:-PLACEHOLDER_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-PLACEHOLDER_PASS}
     volumes:
       - db-data:/var/lib/postgresql/data
+      - ./init:/docker-entrypoint-initdb.d
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-PLACEHOLDER_USER} -d ${POSTGRES_DB:-PLACEHOLDER_DB}"]
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-PLACEHOLDER_USER} -d ${POSTGRES_DB:-PLACEHOLDER_DB}",
+        ]
       interval: 10s
       timeout: 5s
       retries: 5
 
-## PgAdmin Database Management
+  ## PgAdmin Database Management
   pgadmin:
     image: dpage/pgadmin4
     container_name: pgadmin4
@@ -38,7 +43,7 @@ services:
     networks:
       - backend-network
     ports:
-      - "8888:80"  # Host:8888 -> Container:80 (standard PgAdmin port inside)
+      - "8888:80" # Host:8888 -> Container:80 (standard PgAdmin port inside)
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_USER:-admin@admin.com}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-admin_password}
@@ -47,7 +52,7 @@ services:
     depends_on:
       - postgres
 
-## Redis Cache & Message Broker
+  ## Redis Cache & Message Broker
   redis:
     image: redis:7-alpine
     container_name: redis
@@ -55,7 +60,7 @@ services:
     networks:
       - backend-network
     ports:
-      - "6379:6379"  # Host:6379 -> Container:6379 (standard Redis port inside)
+      - "6379:6379" # Host:6379 -> Container:6379 (standard Redis port inside)
     command: redis-server --requirepass ${REDIS_PASSWORD:-dev_redis_password}
     healthcheck:
       test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
@@ -63,7 +68,7 @@ services:
       timeout: 5s
       retries: 5
 
-## Django Backend
+  ## Django Backend
   django:
     build:
       context: .
@@ -73,7 +78,7 @@ services:
     networks:
       - backend-network
     ports:
-      - "8000:8000"  # Host:8000 -> Container:8000
+      - "8000:8000" # Host:8000 -> Container:8000
     environment:
       - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY:-dev_secret_key_change_in_production}
       - DJANGO_DEBUG=${DJANGO_DEBUG:-True}
@@ -91,7 +96,7 @@ services:
       redis:
         condition: service_healthy
 
-## Celery Worker
+  ## Celery Worker
   celery:
     build:
       context: .
