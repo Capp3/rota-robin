@@ -1,73 +1,122 @@
-# Welcome to your Lovable project
+# Rota Robin
 
-## Project info
+A timekeeping and time-off management system for business units, built with React and Django.
 
-**URL**: https://lovable.dev/projects/f5166aa9-11b9-43c2-9eef-0cf4781bb937
+## 📋 Project Status
 
-## How can I edit this code?
+**Current Phase**: MVP Backend & API Setup  
+**Focus**: Minimal Django backend with session auth, Postgres, and React frontend integration
 
-There are several ways of editing your application.
+## 🚀 Quick Start
 
-**Use Lovable**
+### Prerequisites
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/f5166aa9-11b9-43c2-9eef-0cf4781bb937) and start prompting.
+- Docker & Docker Compose
+- Node.js (for frontend)
+- Python 3.12+ (managed by uv)
 
-Changes made via Lovable will be committed automatically to this repo.
+### Development Setup
 
-**Use your preferred IDE**
+1. **Clone and setup**
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+   ```bash
+   git clone <YOUR_GIT_URL>
+   cd rota-round
+   ```
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+2. **Start backend services**
 
-Follow these steps:
+   ```bash
+   cd backend
+   docker compose up -d
+   ```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+3. **Start frontend**
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+   ```bash
+   npm install
+   npm run dev  # Vite on http://localhost:8080
+   ```
 
-# Step 3: Install the necessary dependencies.
-npm i
+4. **View docs locally**
+   ```bash
+   uv add --group dev mkdocs mkdocstrings[python]
+   uv run mkdocs serve --config-file mkdocs.yml --dev-addr 127.0.0.1:9000
+   ```
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+## 📚 Documentation
+
+- **[📖 Full Documentation](https://capp3.github.io/rota-round/)** - Published docs
+- **[🏗️ Architecture](docs/architecture.md)** - System overview and decisions
+- **[⚙️ Development Guide](docs/development.md)** - Setup and workflows
+- **[🔧 Technical Decisions](docs/technical.md)** - Standards and conventions
+- **[🔒 CSRF/CORS Guide](docs/csrf-cors.md)** - Session auth configuration
+- **[📋 Product Requirements](docs/prd.md)** - Complete specification
+
+## 🛠️ Technology Stack
+
+### Frontend
+
+- React 18 + TypeScript
+- Vite (build tool)
+- Tailwind CSS + shadcn/ui
+- React Router DOM, TanStack Query
+
+### Backend
+
+- Django 5.2+ (session auth)
+- PostgreSQL 18
+- Redis (cache/queue)
+- Celery (background tasks)
+- uv (Python package manager)
+
+### Infrastructure
+
+- Docker & Docker Compose
+- GitHub Actions (CI/CD)
+- GitHub Pages (docs)
+- Dependabot (dependency updates)
+
+## 🔧 Services (Development)
+
+| Service    | Port | Purpose                |
+| ---------- | ---- | ---------------------- |
+| React SPA  | 8080 | Frontend application   |
+| Django API | 8000 | Backend API            |
+| PgAdmin    | 8888 | Database management    |
+| Postgres   | 5432 | Database server        |
+| Redis      | 6379 | Cache & message broker |
+
+## 📁 Project Structure
+
+```
+rota-round/
+├── docs/                    # Documentation
+├── src/                     # React frontend
+├── backend/                 # Django backend
+│   ├── compose.yml         # Docker services
+│   └── init/               # Postgres init scripts
+├── config/                 # Configuration files
+├── .github/                # GitHub Actions & Dependabot
+└── mkdocs.yml             # Documentation config
 ```
 
-**Edit a file directly in GitHub**
+## 🎯 MVP Scope
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+- Employee timeclock entry and approval
+- Holiday/Leave/TOIL request management
+- Manager dashboard and employee management
+- Time balance tracking
+- Django session authentication
+- PostgreSQL database
 
-**Use GitHub Codespaces**
+## 🤝 Contributing
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+1. Follow the [Development Guide](docs/development.md)
+2. Update documentation for any changes
+3. Use `uv` for Python dependencies
+4. Keep backend changes minimal for MVP
 
-## What technologies are used for this project?
+## 📄 License
 
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/f5166aa9-11b9-43c2-9eef-0cf4781bb937) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+[Add your license here]

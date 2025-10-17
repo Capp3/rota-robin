@@ -2,6 +2,7 @@ site_name: Rota Robin Docs
 repo_url: https://github.com/Capp3/rota-round
 docs_dir: docs
 site_dir: site
+use_directory_urls: false
 
 theme:
   name: readthedocs
@@ -22,7 +23,7 @@ markdown_extensions:
   - footnotes
 
 nav:
-  - Overview: prd.md
+  - Home: index.md
   - Development: development.md
   - Architecture: architecture.md
   - Technical Decisions: technical.md
@@ -30,4 +31,5 @@ nav:
   - Frontend: frontend.md
   - Security (CSRF/CORS): csrf-cors.md
   - Logging: logging.md
+  - Product Requirements: prd.md
   - Status: status.md
